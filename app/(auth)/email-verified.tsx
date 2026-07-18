@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/Button';
 
 /**
  * Post-email-confirmation landing (deep link: forge://email-verified).
- * Does not establish a session — login stays on the Sign In screen.
+ * Lives in the auth group so it is only reachable when logged out — never the
+ * post-login destination when (auth) unmounts after a successful sign-in.
  */
 export default function EmailVerifiedScreen() {
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function EmailVerifiedScreen() {
         <FadeInView onceKey="email-verified-brand" className="items-center gap-5">
           <View className="rounded-[22px] border border-accent/40 bg-forge-900 p-1.5">
             <Image
-              source={require('../assets/images/forge-logo.png')}
+              source={require('../../assets/images/forge-logo.png')}
               style={{ width: 72, height: 72, borderRadius: 16 }}
               contentFit="cover"
               accessibilityLabel="Forge logo"

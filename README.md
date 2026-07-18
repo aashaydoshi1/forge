@@ -135,15 +135,38 @@ In Supabase Dashboard → **Authentication → URL Configuration**, add Redirect
 
 Override with `EXPO_PUBLIC_EMAIL_REDIRECT_URL` only if you host a custom HTTPS confirmation page.
 
-## EAS Build
+## Development builds (Expo Dev Client)
 
-Profiles in `eas.json` use EAS environments (`development` / `preview` / `production`).
+Forge uses **expo-dev-client** (not Expo Go) for native module support (SecureStore, splash, etc.).
+
+EAS profiles:
+
+| Profile | Purpose |
+|---------|---------|
+| `development` | Dev Client — Android APK + iOS Simulator |
+| `development-device` | Dev Client — Android device APK |
+| `preview` / `production` | Release builds (unchanged) |
+
+Ensure `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` exist in the EAS **development** environment before building.
+
+### Install the Dev Client (Android device/emulator)
 
 ```bash
-eas build --profile development   # Dev client APK
-eas build --profile preview       # Internal testing APK
-eas build --profile production    # Store bundle
+eas login
+eas build --platform android --profile development
 ```
+
+When the build finishes, install the APK from the Expo dashboard link (or scan the QR / use `eas build:run -p android --latest`).
+
+### Start live development
+
+```bash
+npm start
+```
+
+Open the installed Forge Dev Client and connect to the bundler (same Wi‑Fi, or press `a` / scan the QR in the terminal).
+
+JS/TS changes reload live. Native changes (plugins, `app.config.ts`, new native deps) need a new Dev Client build.
 
 ### Required public env vars (EAS)
 

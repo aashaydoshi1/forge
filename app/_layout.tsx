@@ -23,8 +23,6 @@ function RootNavigator() {
 
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0d0d12' } }}>
-      {/* Always reachable after email confirmation — no session required */}
-      <Stack.Screen name="email-verified" />
       <Stack.Protected guard={!!session && hasProfile}>
         <Stack.Screen name="(app)" />
       </Stack.Protected>

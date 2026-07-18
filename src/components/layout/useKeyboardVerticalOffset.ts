@@ -3,7 +3,8 @@ import { useHeaderHeight } from '@react-navigation/elements';
 
 /**
  * Shared keyboard offset for Forge screens with a navigation header.
- * iOS needs the header height; Android usually relies on window resize.
+ * iOS needs the header height for KeyboardAvoidingView.
+ * Android IME clearance is handled by useAndroidKeyboardBottomInset instead.
  */
 export function useKeyboardVerticalOffset(extraOffset = 0): number {
   const headerHeight = useHeaderHeight();

@@ -179,8 +179,6 @@ export default function ScheduleScreen() {
               const assignment = assignments.find((item) => item.dayOfWeek === day.value);
               const hasPlan = !!assignment?.planId;
               const isToday = day.value === todayDayOfWeek;
-              const isThursday = day.value === 3;
-              const showEditAction = hasPlan || isThursday;
 
               return (
                 <Pressable
@@ -214,17 +212,9 @@ export default function ScheduleScreen() {
                       </Text>
                     </View>
 
-                    <View
-                      className={`rounded-full px-3 py-1 ${
-                        showEditAction ? 'bg-accent/15' : 'bg-forge-800'
-                      }`}
-                    >
-                      <Text
-                        className={`text-[11px] font-bold uppercase tracking-wide ${
-                          showEditAction ? 'text-accent' : 'text-forge-400'
-                        }`}
-                      >
-                        {showEditAction ? 'Edit' : 'Rest'}
+                    <View className="rounded-full bg-accent/15 px-3 py-1">
+                      <Text className="text-[11px] font-bold uppercase tracking-wide text-accent">
+                        Edit
                       </Text>
                     </View>
                   </View>

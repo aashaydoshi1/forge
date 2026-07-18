@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useAndroidKeyboardBottomInset } from './useAndroidKeyboardBottomInset';
 import { useKeyboardVerticalOffset } from './useKeyboardVerticalOffset';
 
 interface KeyboardAvoidingLayoutProps {
@@ -26,6 +27,9 @@ export function KeyboardAvoidingLayout({
 }: KeyboardAvoidingLayoutProps) {
   const insets = useSafeAreaInsets();
   const keyboardVerticalOffset = useKeyboardVerticalOffset();
+  // Bottom safe-area is applied on the footer, not SafeAreaView — use full IME height.
+  const androidKeyboardInset = useAndroidKeyboardBottomInset({ subtractSafeArea: false });
+  const keyboardOpenOnAndroid = androidKeyboardInset > 0;
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} className={`flex-1 bg-forge-950 ${className}`}>
@@ -33,13 +37,20 @@ export function KeyboardAvoidingLayout({
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={keyboardVerticalOffset}
-        style={{ flex: 1 }}
+        style={
+          keyboardOpenOnAndroid
+            ? { flex: 1, paddingBottom: androidKeyboardInset }
+            : { flex: 1 }
+        }
       >
         <View className={`flex-1 px-6 ${contentClassName}`}>{children}</View>
         {footer ? (
           <View
             className={`border-t border-forge-800 bg-forge-950 px-6 pt-3 ${footerClassName}`}
-            style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+            style={{
+              // While the IME is open, IME padding clears the keyboard — drop nav-bar pad.
+              paddingBottom: keyboardOpenOnAndroid ? 12 : Math.max(insets.bottom, 12),
+            }}
           >
             {footer}
           </View>

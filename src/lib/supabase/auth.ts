@@ -1,3 +1,5 @@
+import { getEmailVerifiedRedirectUrl } from '@/config/env';
+
 import { getSupabase } from './client';
 
 export async function signInWithEmail(email: string, password: string) {
@@ -13,7 +15,14 @@ export async function signUpWithEmail(email: string, password: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('Supabase is not configured');
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      // After email confirmation, open the in-app success screen (no web session).
+      emailRedirectTo: getEmailVerifiedRedirectUrl(),
+    },
+  });
   if (error) throw error;
   return data;
 }

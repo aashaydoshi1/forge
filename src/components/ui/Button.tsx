@@ -1,4 +1,13 @@
-import { ActivityIndicator, Pressable, Text, type PressableProps } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  type GestureResponderEvent,
+  type PressableProps,
+} from 'react-native';
+import Animated from 'react-native-reanimated';
+
+import { usePressScale } from '@/components/motion';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 
@@ -7,6 +16,8 @@ interface ButtonProps extends PressableProps {
   variant?: ButtonVariant;
   loading?: boolean;
 }
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: 'bg-accent active:bg-accent-dark',
@@ -26,14 +37,27 @@ export function Button({
   disabled,
   loading = false,
   className = '',
+  style,
+  onPressIn,
+  onPressOut,
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+  const { animatedStyle, handlePressIn, handlePressOut } = usePressScale({ disabled: isDisabled });
 
   return (
-    <Pressable
+    <AnimatedPressable
+      style={[animatedStyle, style]}
       className={`rounded-xl px-6 py-4 items-center justify-center ${variantClasses[variant]} ${isDisabled ? 'opacity-50' : ''} ${className}`}
       disabled={isDisabled}
+      onPressIn={(event: GestureResponderEvent) => {
+        handlePressIn();
+        onPressIn?.(event);
+      }}
+      onPressOut={(event: GestureResponderEvent) => {
+        handlePressOut();
+        onPressOut?.(event);
+      }}
       {...props}
     >
       {loading ? (
@@ -41,6 +65,6 @@ export function Button({
       ) : (
         <Text className={textClasses[variant]}>{title}</Text>
       )}
-    </Pressable>
+    </AnimatedPressable>
   );
 }

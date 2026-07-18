@@ -1,8 +1,32 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 
+/** iOS Keychain historically rejected values above ~2048 bytes. */
 const CHUNK_SIZE = 2048;
 
+let secureStoreAvailable: boolean | null = null;
+
+async function isSecureStoreAvailable(): Promise<boolean> {
+  if (secureStoreAvailable !== null) {
+    return secureStoreAvailable;
+  }
+
+  try {
+    // false on web (native stub is empty) and when the native module is missing
+    secureStoreAvailable = await SecureStore.isAvailableAsync();
+  } catch {
+    secureStoreAvailable = false;
+  }
+
+  return secureStoreAvailable;
+}
+
 async function setItem(key: string, value: string): Promise<void> {
+  if (!(await isSecureStoreAvailable())) {
+    await AsyncStorage.setItem(key, value);
+    return;
+  }
+
   if (value.length <= CHUNK_SIZE) {
     await SecureStore.setItemAsync(key, value);
     return;
@@ -20,6 +44,10 @@ async function setItem(key: string, value: string): Promise<void> {
 }
 
 async function getItem(key: string): Promise<string | null> {
+  if (!(await isSecureStoreAvailable())) {
+    return AsyncStorage.getItem(key);
+  }
+
   const chunkCountStr = await SecureStore.getItemAsync(`${key}_chunks`);
 
   if (!chunkCountStr) {
@@ -39,6 +67,11 @@ async function getItem(key: string): Promise<string | null> {
 }
 
 async function removeItem(key: string): Promise<void> {
+  if (!(await isSecureStoreAvailable())) {
+    await AsyncStorage.removeItem(key);
+    return;
+  }
+
   const chunkCountStr = await SecureStore.getItemAsync(`${key}_chunks`);
 
   if (!chunkCountStr) {
@@ -54,6 +87,7 @@ async function removeItem(key: string): Promise<void> {
   }
 }
 
+/** Supabase auth storage — SecureStore on native, AsyncStorage when unavailable. */
 export const secureStoreAdapter = {
   getItem,
   setItem,

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
-import { Screen } from '@/components/layout/Screen';
+import { KeyboardAwareScreen } from '@/components/layout/KeyboardAwareScreen';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Typography } from '@/components/ui/Typography';
@@ -40,7 +40,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <Screen className="justify-center">
+    <KeyboardAwareScreen contentContainerClassName="flex-grow justify-center pb-8">
       <View className="gap-6">
         <View className="gap-2">
           <Typography variant="title">Welcome back</Typography>
@@ -101,6 +101,6 @@ export default function LoginScreen() {
           </Link>
         </View>
       </View>
-    </Screen>
+    </KeyboardAwareScreen>
   );
 }

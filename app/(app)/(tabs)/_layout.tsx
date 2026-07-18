@@ -1,25 +1,54 @@
-import { SymbolView } from 'expo-symbols';
+import { Platform, StyleSheet } from 'react-native';
+import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { Tabs } from 'expo-router';
+
+const FORGE_BLACK = '#0d0d12';
+const FORGE_BORDER = '#2a2a35';
+const FORGE_MUTED = '#5c5c72';
+const FORGE_ACCENT = '#ff6b35';
+const FORGE_TEXT = '#f5f5f7';
+
+type TabIconProps = {
+  name: SymbolViewProps['name'];
+  nameFocused?: SymbolViewProps['name'];
+  color: string;
+  focused: boolean;
+};
+
+function TabIcon({ name, nameFocused, color, focused }: TabIconProps) {
+  return (
+    <SymbolView
+      name={focused && nameFocused ? nameFocused : name}
+      tintColor={color}
+      size={22}
+      weight={focused ? 'semibold' : 'regular'}
+    />
+  );
+}
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
-        headerStyle: { backgroundColor: '#0d0d12' },
-        headerTintColor: '#f5f5f7',
+        headerShown: false,
+        headerStyle: { backgroundColor: FORGE_BLACK },
+        headerTintColor: FORGE_TEXT,
         headerTitleStyle: { fontWeight: '600' },
-        tabBarStyle: { backgroundColor: '#1a1a22', borderTopColor: '#2a2a35' },
-        tabBarActiveTintColor: '#ff6b35',
-        tabBarInactiveTintColor: '#7a7a8f',
+        headerShadowVisible: false,
+        tabBarActiveTintColor: FORGE_ACCENT,
+        tabBarInactiveTintColor: FORGE_MUTED,
+        tabBarHideOnKeyboard: true,
+        tabBarLabelStyle: styles.tabLabel,
+        tabBarItemStyle: styles.tabItem,
+        tabBarStyle: styles.tabBar,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'house.fill', android: 'home', web: 'home' }} tintColor={color} size={24} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="house" nameFocused="house.fill" color={color} focused={focused} />
           ),
         }}
       />
@@ -27,11 +56,26 @@ export default function TabLayout() {
         name="workouts"
         options={{
           title: 'Workouts',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{ ios: 'dumbbell.fill', android: 'fitness_center', web: 'fitness_center' }}
-              tintColor={color}
-              size={24}
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="dumbbell"
+              nameFocused="dumbbell.fill"
+              color={color}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="schedule"
+        options={{
+          title: 'Schedule',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="calendar"
+              nameFocused="calendar"
+              color={color}
+              focused={focused}
             />
           ),
         }}
@@ -40,11 +84,12 @@ export default function TabLayout() {
         name="coach"
         options={{
           title: 'Coach',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{ ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' }}
-              tintColor={color}
-              size={24}
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="sparkles"
+              nameFocused="sparkles"
+              color={color}
+              focused={focused}
             />
           ),
         }}
@@ -53,11 +98,12 @@ export default function TabLayout() {
         name="progress"
         options={{
           title: 'Progress',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{ ios: 'chart.line.uptrend.xyaxis', android: 'trending_up', web: 'trending_up' }}
-              tintColor={color}
-              size={24}
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="chart.line.uptrend.xyaxis"
+              nameFocused="chart.line.uptrend.xyaxis"
+              color={color}
+              focused={focused}
             />
           ),
         }}
@@ -66,15 +112,33 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{ ios: 'person.fill', android: 'person', web: 'person' }}
-              tintColor={color}
-              size={24}
-            />
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="person" nameFocused="person.fill" color={color} focused={focused} />
           ),
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: FORGE_BLACK,
+    borderTopColor: FORGE_BORDER,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    elevation: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    paddingTop: 6,
+    height: Platform.OS === 'ios' ? 88 : 64,
+  },
+  tabItem: {
+    paddingVertical: 2,
+  },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    letterSpacing: 0.4,
+    marginTop: 2,
+  },
+});

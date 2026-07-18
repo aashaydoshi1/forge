@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
-import { Screen } from '@/components/layout/Screen';
+import { KeyboardAwareScreen } from '@/components/layout/KeyboardAwareScreen';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Typography } from '@/components/ui/Typography';
@@ -36,26 +36,26 @@ export default function SignupScreen() {
 
     try {
       const { session } = await signUpWithEmail(values.email, values.password);
-  
+
       if (!session) {
         setSuccessMessage('Check your email to confirm your account, then sign in.');
       }
     } catch (error) {
-      console.log("SIGNUP ERROR:", error);
-  
+      console.log('SIGNUP ERROR:', error);
+
       if (error instanceof Error) {
-        console.log("MESSAGE:", error.message);
-        console.log("STACK:", error.stack);
+        console.log('MESSAGE:', error.message);
+        console.log('STACK:', error.stack);
         setAuthError(error.message);
       } else {
-        console.log("UNKNOWN ERROR:", error);
-        setAuthError("Failed to create account");
+        console.log('UNKNOWN ERROR:', error);
+        setAuthError('Failed to create account');
       }
     }
   };
 
   return (
-    <Screen className="justify-center">
+    <KeyboardAwareScreen contentContainerClassName="flex-grow justify-center pb-8">
       <View className="gap-6">
         <View className="gap-2">
           <Typography variant="title">Create account</Typography>
@@ -135,6 +135,6 @@ export default function SignupScreen() {
           </Link>
         </View>
       </View>
-    </Screen>
+    </KeyboardAwareScreen>
   );
 }

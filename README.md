@@ -119,30 +119,55 @@ supabase/
 
 ## Authentication
 
-Forge uses **Supabase Auth** with email and password. Sessions are persisted securely on-device via `expo-secure-store`. Route groups enforce access:
+Forge uses **Supabase Auth** with email and password. Sessions are persisted securely on-device via `expo-secure-store`. Login stays in the mobile app only.
+
+Route groups enforce access:
 
 - `(auth)` — visible when signed out
 - `(app)` — visible when signed in
 
-## EAS Build (Production)
+### Email confirmation
 
-Build profiles are defined in `eas.json`:
+After signup, confirmation opens the in-app success screen (`forge://email-verified`) — no web session.
+
+In Supabase Dashboard → **Authentication → URL Configuration**, add Redirect URL:
+`forge://email-verified`
+
+Override with `EXPO_PUBLIC_EMAIL_REDIRECT_URL` only if you host a custom HTTPS confirmation page.
+
+## EAS Build
+
+Profiles in `eas.json` use EAS environments (`development` / `preview` / `production`).
 
 ```bash
-eas build --profile development   # Dev client
-eas build --profile preview       # Internal testing
-eas build --profile production    # App Store / Play Store
+eas build --profile development   # Dev client APK
+eas build --profile preview       # Internal testing APK
+eas build --profile production    # Store bundle
 ```
 
-Update `app.config.ts` with your EAS project ID before building:
+### Required public env vars (EAS)
 
-```ts
-extra: {
-  eas: {
-    projectId: 'your-eas-project-id',
-  },
-},
+`EXPO_PUBLIC_*` values are inlined into the JS bundle at build time. They are **not secrets**, but do **not** put them only in a local `.env` — that file is not uploaded to EAS.
+
+Create these on EAS for each environment you build (`development`, `preview`, `production`):
+
+```bash
+# Replace values with your Supabase Project URL + anon (public) key
+eas env:create --name EXPO_PUBLIC_SUPABASE_URL --value "https://YOUR_PROJECT_REF.supabase.co" --environment development --visibility plaintext
+eas env:create --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "YOUR_ANON_KEY" --environment development --visibility plaintext
+
+eas env:create --name EXPO_PUBLIC_SUPABASE_URL --value "https://YOUR_PROJECT_REF.supabase.co" --environment preview --visibility plaintext
+eas env:create --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "YOUR_ANON_KEY" --environment preview --visibility plaintext
+
+eas env:create --name EXPO_PUBLIC_SUPABASE_URL --value "https://YOUR_PROJECT_REF.supabase.co" --environment production --visibility plaintext
+eas env:create --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "YOUR_ANON_KEY" --environment production --visibility plaintext
 ```
+
+Or add them in the Expo dashboard: **Project → Environment variables**.
+
+Then rebuild the APK (`eas build --profile development` or `preview`). Local `.env` remains for `npx expo start` only.
+
+> Use **plaintext** (or sensitive) visibility — not `secret`. Secret vars are not available to Metro when inlining `EXPO_PUBLIC_*` into the app.
 
 ## Development Phases
 

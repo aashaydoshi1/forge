@@ -42,6 +42,196 @@ export interface Database {
         };
         Relationships: [];
       };
+      workout_plans: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'workout_plans_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      exercises: {
+        Row: {
+          id: string;
+          workout_plan_id: string;
+          exercise_name: string;
+          sets: number;
+          reps: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          workout_plan_id: string;
+          exercise_name: string;
+          sets: number;
+          reps: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          workout_plan_id?: string;
+          exercise_name?: string;
+          sets?: number;
+          reps?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'exercises_workout_plan_id_fkey';
+            columns: ['workout_plan_id'];
+            isOneToOne: false;
+            referencedRelation: 'workout_plans';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      workout_sessions: {
+        Row: {
+          id: string;
+          user_id: string;
+          workout_plan_id: string;
+          started_at: string;
+          completed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          workout_plan_id: string;
+          started_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          workout_plan_id?: string;
+          started_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'workout_sessions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'workout_sessions_workout_plan_id_fkey';
+            columns: ['workout_plan_id'];
+            isOneToOne: false;
+            referencedRelation: 'workout_plans';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      completed_sets: {
+        Row: {
+          id: string;
+          session_id: string;
+          exercise_id: string;
+          weight: number | null;
+          reps: number;
+          set_number: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          session_id: string;
+          exercise_id: string;
+          weight?: number | null;
+          reps: number;
+          set_number: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          session_id?: string;
+          exercise_id?: string;
+          weight?: number | null;
+          reps?: number;
+          set_number?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'completed_sets_session_id_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'workout_sessions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'completed_sets_exercise_id_fkey';
+            columns: ['exercise_id'];
+            isOneToOne: false;
+            referencedRelation: 'exercises';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      workout_schedules: {
+        Row: {
+          id: string;
+          user_id: string;
+          day_of_week: number;
+          workout_plan_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          day_of_week: number;
+          workout_plan_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          day_of_week?: number;
+          workout_plan_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'workout_schedules_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'workout_schedules_workout_plan_id_fkey';
+            columns: ['workout_plan_id'];
+            isOneToOne: false;
+            referencedRelation: 'workout_plans';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
